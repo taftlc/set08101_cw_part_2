@@ -100,18 +100,10 @@
    btnSubmit.onclick = function() {
       var name = txtName.value;
       var message = taMessage.value; 
+	  
+	  /* code has been modified here to leave feedback in localStorage */
       
-      /** 
-       * add here any validation on the input parameters. 
-       * e.g. alert message is too short. 
-       * ... 
-      **/
-      
-      // This is the main logic to send the message to the feedback. 
-      // a new script is created and asynchronously requested.
-      var script = document.createElement("script");
-      script.src="do.not.ignore.feedback.js?name="+encodeURIComponent(name)+'&message='+encodeURIComponent(message); 
-      document.body.appendChild(script);
+	  localStorage.setItem(name, message);
       
       // Displays the thank you message.
       // Removes the feedback button
