@@ -1,10 +1,9 @@
 body {
-	background-image: url("media/outdoors_background.jpg"); 
 	background-repeat:no-repeat;
 	background-position:center;
 	background-size:cover; 
 	background-attachment: fixed;
-	background-color:black; 
+	background-color: #1E1E24; 
 }
 .navigation {
 	list-style:none;
@@ -23,12 +22,12 @@ body {
 	font-size: 25px;
 	display:block;
 	padding:1em;
-	color:white;
+	color: #FF0035;
 }
 
 .navigation a:hover {
-  background-color: #ddd;
-  color: black;
+  background-color: #6C91C2;
+  color: #1E1E24;
 }
 
 @media all and (max-width: 800px) {
@@ -55,28 +54,28 @@ body {
 
 
 header {
-	color: white;
+	color: #33673B;
 	opacity: 0.8; 
 	font-weight: 900;
 	font-size: 45px; 
 	text-align: center;
 }
 h1 {
-	color:white; 
+	color:#D1C6AD; 
 	font-weight: 900;
 }
 h4 {
-	color:white; 
+	color:#D1C6AD; 
 	font-weight: 900;
 }
 p {
-	color:white;
+	color:#D1C6AD;
 }
 aside {
-	color:white;
+	color:#D1C6AD;
 }
 footer {
-	color: white;
+	color: #6C91C2;
 	width: 100%;
 	height: 40px;
 	position: absolute;
