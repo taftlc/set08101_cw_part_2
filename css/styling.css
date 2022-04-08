@@ -63,6 +63,7 @@ header {
 h1 {
 	color:#D1C6AD; 
 	font-weight: 900;
+	font-size: 35px;
 }
 h4 {
 	color:#D1C6AD; 
@@ -70,6 +71,7 @@ h4 {
 }
 p {
 	color:#D1C6AD;
+	font-size: 20px; 
 }
 aside {
 	color:#D1C6AD;
