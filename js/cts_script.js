@@ -1,7 +1,8 @@
 /*	flags are 0 for neutral effect
 	1 for positive effect
 	2 for negative effect
-	3 is a trigger to calculate total score*/
+	3 is a trigger to calculate total score
+	4 is for restart, it zeroes current survival score and runs an hs_update*/
 	
 const situations = [{
 		id: 0,
@@ -13,8 +14,8 @@ const situations = [{
 	{
 		id: 1,
 		q: "Theres a beautiful trek up some nearby mountains. Its bound to be cold but that never bothered you much anyway.",
-		a: [{text: "Proceed", next_situation: 1, ss_flag: 0 },
-			{text: "Proceed", next_situation: 1, ss_flag: 0 }
+		a: [{text: "Proceed", next_situation: 2, ss_flag: 0 },
+			{text: "Proceed", next_situation: 2, ss_flag: 0 }
 		]
 	},
 	{
@@ -27,8 +28,8 @@ const situations = [{
 	{
 		id: 3,
 		q: "You choose to wait for better weather.",
-		a: [{text: "Proceed", next_situation: 4, ss_flag: 0 },
-			{text: "Proceed", next_situation: 4, ss_flag: 0 }
+		a: [{text: "Proceed", next_situation: 4, ss_flag: 3 }, //make sure you reset this value to "0"
+			{text: "Proceed", next_situation: 4, ss_flag: 3 }
 		]
 	},
 	{
@@ -45,7 +46,7 @@ const situations = [{
 			{text: "Proceed", next_situation: 6, ss_flag: 0 }
 		]
 	},
-	/*{
+	{
 		id: 6,
 		q: "Upon arriving at the park you encounter a park ranger. Surprised to see you, the ranger gives you a long speech about safety and his responsibility for the visitors to the park. You are turned away. There wont be any camping this week.",
 		a: [{text: "Proceed", next_situation: 4, ss_flag: 0 },
@@ -408,27 +409,41 @@ const situations = [{
 		a: [{text: "Restart?", next_situation: 0, ss_flag: 3 },
 			{text: "Restart?", next_situation: 0, ss_flag: 3 }
 		]
-	}*/
+	}
 ]			
 
-var start = true;
-var survival_score = 0;
+var start_flag = 0;
+
+
+if (start_flag == 0) {
+	survival_score_calc(4);
+	iterate(0);
+	start_flag++; 
+}
 
 
 function iterate(id) {
 	
-	console.log("placemarker 1");
+	const answer_1 = document.getElementById("ans_1");
+	const answer_2 = document.getElementById("ans_2");
+	
+	//const ss_hs = document.getElementByID("ss_hs");
+	
+	//ss_hs = localStorage.getItem("ss_highscore"); 
+
+	answer_1.style.backgroundColor = "#6c91c2";
+	answer_2.style.backgroundColor = "#6c91c2";
+
 	
 	var answer = document.getElementsByClassName("answer");
 	answer[0].innerText = "";
 	
 	const question = document.getElementById("question");
+
 	
 	question.innerText = situations[id].q; 
 	
-	const answer_1 = document.getElementById("ans_1");
-	const answer_2 = document.getElementById("ans_2");
-
+	
 	
 	answer_1.innerText = situations[id].a[0].text;
 	answer_2.innerText = situations[id].a[1].text;
@@ -436,66 +451,102 @@ function iterate(id) {
 	
 	answer_1.next = situations[id].a[0].next_situation; 
 	answer_2.next = situations[id].a[1].next_situation; 
+
 	
-	console.log("placemarker 2");
-	
-	console.log("this is the current id number before selecting the next answer: " + id);
-	
-	var selected = 0;
+	answer_1.ss_flag = situations[id].a[0].ss_flag; 
+	answer_2.ss_flag = situations[id].a[1].ss_flag; 
 	
 	 answer_1.addEventListener("click", () => {
         answer_1.style.backgroundColor = "#d1c6ad";
         answer_2.style.backgroundColor = "#6c91c2";
-        selected = answer_1.next;
-		proceed(selected);
-		console.log("next selected is: " + selected);
+		proceed(answer_1.next, answer_1.ss_flag);
+
+
     })
+
+
   
     // Show selection for answer_2
     answer_2.addEventListener("click", () => {
         answer_1.style.backgroundColor = "#6c91c2";
         answer_2.style.backgroundColor = "#d1c6ad";
-        selected = answer_2.next;
-		proceed(selected);
-		console.log("next selected is: " + selected);
+		proceed(answer_2.next, answer_2.ss_flag);
+
+
     })
+
 	
-	console.log("placemarker 3");
-	
-	//Restart method
 	const restart = document.getElementsByClassName("restart");
+
 	
 	restart[0].addEventListener("click", function (e) {
-		if (selected >= 1) {
+		if (answer_1.next >= 1) {
 			iterate(0);
-			survival_score = 0; 
+			survival_score_calc(4); 
 		} else {
 			return; 
 		}
 
 	})
+
+}
+
+function survival_score_calc(ss_flag) {
 	
-	console.log("placemarker 4");
+	switch (ss_flag) {
+		case 0:
+			console.log("case 0");
+			break;
+		case 1:
+			console.log("case 1");
+			survival_score++;
+			break;
+		case 2:
+			console.log("case 2");
+			survival_score--; 
+			break;
+		case 3:
+			console.log("case 3");
+			update_highscore(survival_score);
+			break;
+		case 4:
+			survival_score = 0;
+			update_highscore(survival_score);
+			break;
+	}
+	
+	console.log("survival score is currently " + survival_score); //this is just a check for debugging purposes
 	
 }
 
-function proceed(selected) {
+function update_highscore(survival_score) {
 	
-	console.log("placemarker 5");
+	const ss_highscore_display = document.getElementById("ss_hs");
 	
-	const proceed = document.getElementsByClassName("proceed")[0];
+	if (survival_score > localStorage.getItem("ss_highscore")) {
+	
+		localStorage.setItem("ss_highscore", survival_score); 
+		
+	}
+		
+	ss_highscore_display.innerText = "Your current highscore is: " + localStorage.getItem("ss_highscore"); 
+	
+	return; 
+	
+}
+	
 
-	proceed.addEventListener("click", () => {
-		console.log("placemarker 6");
-		if (selected >= 1) {
+function proceed(selected, ss_flag) {
+
+	const proceed = document.getElementsByClassName("proceed");
+
+
+	proceed[0].addEventListener("click", function (e) {
+
+			survival_score_calc(ss_flag);
 			iterate(selected);
-			console.log("placemarker 7");
-		}
+			
 		
 	})
 }
 
-
-if (start) {
-	iterate(0);
-}
