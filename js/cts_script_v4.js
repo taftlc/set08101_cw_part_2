@@ -1,4 +1,23 @@
-const situations = [{
+/** 
+*
+* Script: cts_script_v4.js
+* Desc:   Provide active elements to navigate quiz/story 
+* Author: Taft, Luke C. 40498618
+* Last Modified: April 2022
+*
+**/ 
+
+const situations = [
+		
+	/**
+	*
+	* Situations is an array that contains dictionaries housing key/value pairs for information relevant to each situation.
+	* The id uniquely identifies each situation while the next_situation identifies the next in the story line and the ss_flag
+	* identifies the scoring implications of each choice
+	*
+	**/
+	
+	{	
 		id: 0,
 		q: "Faced with a long weekend you have a choice over where you will spend a few days rough camping. Where would you like to go?",
 		a: [{ text: "Mountains", next_situation: 1, ss_flag: 0 },
@@ -651,68 +670,60 @@ const situations = [{
 	}
 ]
 
-var start_flag = 0;
+// Run highscore check and set start condition
 
+ss_calc(4); 
+var start = true; 
 
-if (start_flag == 0) {
-	
-	start_flag++; 
-	init();
+/**
+*
+* The main_loop function handles assigning buttons their values as well as listening and handling 
+* click events on either answer button or restart button
+*
+**/
 
-}
+function main_loop(id) {
+	
+	// Iintialize quiz buttons
 
-function init() {
-	
-	ss_calc(4); 
-	
-	main_loop("0");
-	
-	//use this to intialize 
-	
-}
-
-function main_loop(next_flag) {
-	
 	const answer_1 = document.getElementById("ans_1");
 	const answer_2 = document.getElementById("ans_2");
 	const question = document.getElementById("question");
 	const restart = document.getElementById("restart_id"); 
-	const proceed = document.getElementById("proceed_id");
+	
+	// Reset answer color each loop for differentiation
 	
 	answer_1.style.backgroundColor = "#6c91c2";
 	answer_2.style.backgroundColor = "#6c91c2";
 	
-	question.innerText = situations[next_flag].q; 
-	answer_1.innerText = situations[next_flag].a[0].text;
-	answer_2.innerText = situations[next_flag].a[1].text;
-
-	answer_1.next = situations[next_flag].a[0].next_situation; 
-	answer_2.next = situations[next_flag].a[1].next_situation; 
-
-	answer_1.ss_flag = situations[next_flag].a[0].ss_flag; 
-	answer_2.ss_flag = situations[next_flag].a[1].ss_flag; 
+	// Set inner text for question and answers 
 	
+	question.innerText = situations[id].q; 
+	answer_1.innerText = situations[id].a[0].text;
+	answer_2.innerText = situations[id].a[1].text;
+	
+	// Set next situation as variable
+	
+	answer_1.next = situations[id].a[0].next_situation; 
+	answer_2.next = situations[id].a[1].next_situation; 
+	
+	// Set survival_score flag
+
+	answer_1.ss_flag = situations[id].a[0].ss_flag; 
+	answer_2.ss_flag = situations[id].a[1].ss_flag; 
+
 	answer_1.addEventListener("click", () => {
-		console.log("answer_1 event listener");
 		answer_1.style.backgroundColor = "#d1c6ad";
 		answer_2.style.backgroundColor = "#6c91c2";
-		next_flag = answer_1.next;
-		console.log(next_flag);
-	})
-	
-	answer_2.addEventListener("click", () => {
-		console.log("answer_2 event listener");
-		answer_1.style.backgroundColor = "#6c91c2";
-		answer_2.style.backgroundColor = "#d1c6ad";
-		next_flag = answer_2.next;
-		console.log(next_flag);
+		window.id = answer_1.next;
+		window.ss_flag = answer_1.ss_flag; 
 	})
 
-	proceed.addEventListener("click", () => {
-		
-		ss_calc(answer_2.ss_flag);
-		main_loop(next_flag); 
-		
+	answer_2.addEventListener("click", () => {
+		answer_1.style.backgroundColor = "#6c91c2";
+		answer_2.style.backgroundColor = "#d1c6ad";
+		window.id = answer_2.next;
+		window.ss_flag = answer_2.ss_flag; 
 	})
 
 	restart.addEventListener("click", () => {
@@ -725,22 +736,48 @@ function main_loop(next_flag) {
 
 }
 
-function restart_quiz() {
-	
-	ss_calc(4); 
-	main_loop(0);
-	
+// Reset values for each loop iteration
 
+var id = 0; 
+var ss_flag = 0; 
+	
+if (start) {
+	main_loop(id); 
 }
 
+const proceed = document.getElementById("proceed_id");
+
+// The proceed button handles advancing the situation by passing in new id value and sending ss_flag for evaluation
+
+proceed.addEventListener("click", () => {		
+		start = false; 
+		ss_calc(ss_flag); 
+		main_loop(id); 
+	})
+	
+/**
+*
+* The restart_quiz method handles the restart actions. Updating highscore and reseting id to 0
+*
+**/
+
+function restart_quiz() {
+	ss_calc(4); 
+	main_loop(0);
+}
+
+/**
+*
+* "0" flag has neutal effect on survival_score
+* "1" flag has positive effect
+* "2" flag has negative effect
+* "3" triggers on end scenario. Calculates highscore and zeroes survival score after
+* "4" is for init/restart. It zeroes survival_score and runs an update to retrive pre-existing highscore
+*
+**/
+
 function ss_calc(ss_flag) {
-	
-	/*	flags are 0 for neutral effect
-	1 for positive effect
-	2 for negative effect
-	3 is a trigger to calculate total score
-	4 is for init/restart, it zeroes current survival score and runs an hs_update*/
-	
+
 	switch (ss_flag) {
 		case 0:
 			break;
@@ -752,15 +789,21 @@ function ss_calc(ss_flag) {
 			break;
 		case 3:
 			update_highscore(survival_score);
+			survival_score = 0; 
 			break;
 		case 4:
 			survival_score = 0;
 			update_highscore(survival_score);
 			break;
 	}
-
-	
+	console.log(survival_score); 
 }
+
+/**
+*
+*
+*
+**/
 
 function update_highscore(survival_score) {
 	
