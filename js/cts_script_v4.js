@@ -796,7 +796,6 @@ function ss_calc(ss_flag) {
 			update_highscore(survival_score);
 			break;
 	}
-	console.log(survival_score); 
 }
 
 /**
