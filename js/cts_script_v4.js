@@ -800,7 +800,8 @@ function ss_calc(ss_flag) {
 
 /**
 *
-*
+* The update_highscore function handles displaying the current highscore as well as updating the highscore when called 
+* should the current survival score be greater than the stored highscore
 *
 **/
 
