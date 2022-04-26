@@ -679,6 +679,10 @@ var start = true;
 *
 * The main_loop function handles assigning buttons their values as well as listening and handling 
 * click events on either answer button or restart button
+* This function contains code inspired by a GeeksforGeeks article detailing how to create a 
+* simple JavaScript Quiz (https://www.geeksforgeeks.org/how-to-create-a-simple-javascript-quiz/). 
+* Significant rewrites have limited similarity but article provided a framework for this project's
+* main_loop and the data types used to store the situations
 *
 **/
 
